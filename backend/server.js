@@ -13,6 +13,9 @@ const taskRoutes = require('./routes/tasks');
 const progressRoutes = require('./routes/progress');
 const feedbackRoutes = require('./routes/feedback');
 
+// Import error handlers
+const { errorHandler, notFound } = require('./utils/errorHandler');
+
 // Initialize Express app
 const app = express();
 
@@ -55,14 +58,10 @@ mongoose
     process.exit(1);
   });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ 
-    success: false,
-    message: 'Something went wrong!',
-    error: process.env.NODE_ENV === 'development' ? err.message : undefined
-  });
-});
+// Handle 404 - Route not found
+app.use(notFound);
+
+// Global error handling middleware
+app.use(errorHandler);
 
 module.exports = app;

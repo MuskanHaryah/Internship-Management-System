@@ -1,5 +1,6 @@
 const Task = require('../models/Task');
 const User = require('../models/User');
+const Feedback = require('../models/Feedback');
 
 // @desc    Get all tasks
 // @route   GET /api/tasks
@@ -122,6 +123,14 @@ exports.updateTask = async (req, res) => {
       });
     }
 
+    // Prevent manual status change to 'reviewed' - only feedback creation can do this
+    if (req.body.status === 'reviewed') {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot manually set task to reviewed. Please provide feedback to mark task as reviewed.'
+      });
+    }
+
     // If status is being changed to completed
     if (req.body.status === 'completed' && task.status !== 'completed') {
       req.body.completedAt = Date.now();
@@ -175,7 +184,7 @@ exports.submitTask = async (req, res) => {
     task = await Task.findByIdAndUpdate(
       req.params.id,
       {
-        status: 'submitted',
+        status: 'completed',
         submittedAt: Date.now(),
         submissionUrl: req.body.submissionUrl || ''
       },
@@ -186,6 +195,16 @@ exports.submitTask = async (req, res) => {
     )
       .populate('assignedTo', 'name email')
       .populate('assignedBy', 'name email');
+
+    // Reactivate intern if they were inactive (auto-reactivation on task submission)
+    if (task.assignedTo && task.assignedTo._id) {
+      const intern = await User.findById(task.assignedTo._id);
+      if (intern && intern.status === 'inactive') {
+        intern.status = 'active';
+        await intern.save();
+        console.log(`✅ Intern ${intern.name} reactivated after task submission`);
+      }
+    }
 
     res.status(200).json({
       success: true,
@@ -220,11 +239,14 @@ exports.deleteTask = async (req, res) => {
       { $pull: { assignedTasks: task._id } }
     );
 
+    // Delete all feedback associated with this task
+    await Feedback.deleteMany({ task: task._id });
+
     await task.deleteOne();
 
     res.status(200).json({
       success: true,
-      message: 'Task deleted successfully',
+      message: 'Task and associated feedback deleted successfully',
       data: {}
     });
   } catch (error) {

@@ -1,4 +1,5 @@
 const Feedback = require('../models/Feedback');
+const Task = require('../models/Task');
 
 // @desc    Get all feedback
 // @route   GET /api/feedback
@@ -11,10 +12,21 @@ exports.getAllFeedback = async (req, res) => {
       .populate('givenBy', 'name email')
       .sort({ createdAt: -1 });
 
+    // Filter out feedback where task was deleted (task is null after populate)
+    const validFeedback = feedback.filter(f => f.task !== null);
+
+    // Clean up orphaned feedback in the background (don't await)
+    const orphanedIds = feedback.filter(f => f.task === null).map(f => f._id);
+    if (orphanedIds.length > 0) {
+      Feedback.deleteMany({ _id: { $in: orphanedIds } })
+        .then(() => console.log(`Cleaned up ${orphanedIds.length} orphaned feedback entries`))
+        .catch(err => console.error('Error cleaning orphaned feedback:', err));
+    }
+
     res.status(200).json({
       success: true,
-      count: feedback.length,
-      data: feedback
+      count: validFeedback.length,
+      data: validFeedback
     });
   } catch (error) {
     res.status(500).json({
@@ -63,6 +75,9 @@ exports.createFeedback = async (req, res) => {
     req.body.givenBy = req.user._id;
 
     const feedback = await Feedback.create(req.body);
+
+    // Update task status to 'reviewed' when feedback is created
+    await Task.findByIdAndUpdate(task, { status: 'reviewed' });
 
     const populatedFeedback = await Feedback.findById(feedback._id)
       .populate('intern', 'name email')
@@ -124,7 +139,7 @@ exports.updateFeedback = async (req, res) => {
 // @access  Private/Admin
 exports.deleteFeedback = async (req, res) => {
   try {
-    const feedback = await Feedback.findByIdAndDelete(req.params.id);
+    const feedback = await Feedback.findById(req.params.id);
 
     if (!feedback) {
       return res.status(404).json({
@@ -132,6 +147,15 @@ exports.deleteFeedback = async (req, res) => {
         message: 'Feedback not found'
       });
     }
+
+    // Store task ID before deleting feedback
+    const taskId = feedback.task;
+
+    // Delete the feedback
+    await Feedback.findByIdAndDelete(req.params.id);
+
+    // Set task status back to 'completed' when feedback is deleted
+    await Task.findByIdAndUpdate(taskId, { status: 'completed' });
 
     res.status(200).json({
       success: true,
@@ -156,16 +180,27 @@ exports.getInternFeedback = async (req, res) => {
       .populate('givenBy', 'name email')
       .sort({ createdAt: -1 });
 
+    // Filter out feedback where task was deleted
+    const validFeedback = feedback.filter(f => f.task !== null);
+
+    // Clean up orphaned feedback in the background
+    const orphanedIds = feedback.filter(f => f.task === null).map(f => f._id);
+    if (orphanedIds.length > 0) {
+      Feedback.deleteMany({ _id: { $in: orphanedIds } })
+        .then(() => console.log(`Cleaned up ${orphanedIds.length} orphaned feedback entries for intern`))
+        .catch(err => console.error('Error cleaning orphaned feedback:', err));
+    }
+
     // Calculate average rating
-    const avgRating = feedback.length > 0
-      ? feedback.reduce((acc, curr) => acc + curr.rating, 0) / feedback.length
+    const avgRating = validFeedback.length > 0
+      ? validFeedback.reduce((acc, curr) => acc + curr.rating, 0) / validFeedback.length
       : 0;
 
     res.status(200).json({
       success: true,
-      count: feedback.length,
+      count: validFeedback.length,
       averageRating: avgRating.toFixed(2),
-      data: feedback
+      data: validFeedback
     });
   } catch (error) {
     res.status(500).json({

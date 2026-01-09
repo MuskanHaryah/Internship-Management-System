@@ -1,4 +1,5 @@
 const Progress = require('../models/Progress');
+const Task = require('../models/Task');
 
 // @desc    Get all progress
 // @route   GET /api/progress
@@ -49,6 +50,13 @@ exports.createProgress = async (req, res) => {
       .populate('intern', 'name email')
       .populate('task', 'title description');
 
+    // Update task status based on progress
+    if (status === 'completed' || percentage === 100) {
+      await Task.findByIdAndUpdate(task, { status: 'reviewed' });
+    } else if (status === 'in-progress' || (percentage > 0 && percentage < 100)) {
+      await Task.findByIdAndUpdate(task, { status: 'in-progress' });
+    }
+
     res.status(201).json({
       success: true,
       data: populatedProgress
@@ -98,6 +106,17 @@ exports.updateProgress = async (req, res) => {
     )
       .populate('intern', 'name email')
       .populate('task', 'title description');
+
+    // Update task status if progress is completed
+    if (status === 'completed' || percentage === 100) {
+      await Task.findByIdAndUpdate(progress.task._id || progress.task, {
+        status: 'completed'
+      });
+    } else if (status === 'in-progress' || (percentage > 0 && percentage < 100)) {
+      await Task.findByIdAndUpdate(progress.task._id || progress.task, {
+        status: 'in-progress'
+      });
+    }
 
     res.status(200).json({
       success: true,

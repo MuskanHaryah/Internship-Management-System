@@ -1,10 +1,14 @@
 const User = require('../models/User');
+const checkInactiveInterns = require('../utils/checkInactiveInterns');
 
 // @desc    Get all users
 // @route   GET /api/users
 // @access  Private/Admin
 exports.getAllUsers = async (req, res) => {
   try {
+    // Auto-check and update inactive interns
+    await checkInactiveInterns();
+
     const users = await User.find().select('-password').populate('assignedTasks');
 
     res.status(200).json({
@@ -25,6 +29,9 @@ exports.getAllUsers = async (req, res) => {
 // @access  Private/Admin
 exports.getInterns = async (req, res) => {
   try {
+    // Auto-check and update inactive interns
+    await checkInactiveInterns();
+
     const interns = await User.find({ role: 'intern' })
       .select('-password')
       .populate('assignedTasks');
@@ -81,6 +88,47 @@ exports.getUser = async (req, res) => {
     res.status(200).json({
       success: true,
       data: user
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// @desc    Create new user
+// @route   POST /api/users
+// @access  Private/Admin
+exports.createUser = async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'User with this email already exists'
+      });
+    }
+
+    // Create user
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role: role || 'intern'
+    });
+
+    res.status(201).json({
+      success: true,
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
     });
   } catch (error) {
     res.status(500).json({
