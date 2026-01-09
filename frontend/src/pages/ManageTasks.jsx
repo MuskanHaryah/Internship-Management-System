@@ -26,7 +26,7 @@ const ManageTasks = () => {
 
   const { register: registerAdd, handleSubmit: handleSubmitAdd, formState: { errors: errorsAdd }, reset: resetAdd } = useForm();
   const { register: registerEdit, handleSubmit: handleSubmitEdit, formState: { errors: errorsEdit }, reset: resetEdit, setValue } = useForm();
-  const { register: registerFeedback, handleSubmit: handleSubmitFeedback, formState: { errors: errorsFeedback }, reset: resetFeedback, setValue: setValueFeedback, watch: watchFeedback } = useForm();
+  const { register: registerFeedback, handleSubmit: handleSubmitFeedback, formState: { errors: errorsFeedback }, reset: resetFeedback, watch: watchFeedback } = useForm();
 
   useEffect(() => {
     fetchData();

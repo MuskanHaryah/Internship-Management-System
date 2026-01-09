@@ -103,6 +103,9 @@ const AdminDashboard = () => {
     <HoverScale>
       <Card className="relative overflow-hidden">
         <div className="flex items-center justify-between">
+          <div className="bg-white/20 p-3 rounded-lg">
+            <Icon className="h-8 w-8" />
+          </div>
           <div>
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
               {title}

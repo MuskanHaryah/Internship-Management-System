@@ -159,10 +159,11 @@ const ManageFeedback = () => {
       label: `${task.title} - ${task.assignedTo?.name || 'Unassigned'}`,
     }));
 
-  const internOptions = interns.map(intern => ({
-    value: intern._id,
-    label: intern.name,
-  }));
+  // Intern options for dropdown
+  // const internOptions = interns.map(intern => ({
+  //   value: intern._id,
+  //   label: intern.name,
+  // }));
 
   // Analytics calculations
   const analytics = {
