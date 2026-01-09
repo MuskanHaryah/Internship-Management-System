@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext();
 
-export const useTheme = () => {
+const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
     throw new Error('useTheme must be used within a ThemeProvider');
@@ -46,4 +46,7 @@ export const ThemeProvider = ({ children }) => {
   );
 };
 
+// Export hook and context
+// eslint-disable-next-line react-refresh/only-export-components
+export { useTheme };
 export default ThemeContext;

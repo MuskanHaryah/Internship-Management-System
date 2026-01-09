@@ -84,15 +84,6 @@ const InternTaskList = () => {
     return variants[priority] || 'default';
   };
 
-  const getPriorityColor = (priority) => {
-    const colors = {
-      low: 'text-gray-600 dark:text-gray-400',
-      medium: 'text-yellow-600 dark:text-yellow-400',
-      high: 'text-red-600 dark:text-red-400',
-    };
-    return colors[priority] || 'text-gray-600';
-  };
-
   const getDaysUntilDeadline = (deadline) => {
     const today = new Date();
     const deadlineDate = new Date(deadline);
@@ -113,12 +104,6 @@ const InternTaskList = () => {
       return;
     }
 
-    // Validate URL format
-    const urlPattern = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
-    if (!urlPattern.test(submissionUrl.trim())) {
-      toast.error('Please provide a valid URL (e.g., https://drive.google.com/... or https://github.com/...)');
-      return;
-    }
 
     try {
       setSubmitting(true);

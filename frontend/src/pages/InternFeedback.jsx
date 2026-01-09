@@ -120,14 +120,6 @@ const InternFeedback = () => {
     return variants[category] || 'default';
   };
 
-  // Get rating color
-  const getRatingColor = (rating) => {
-    if (rating >= 4.5) return 'text-green-600 dark:text-green-400';
-    if (rating >= 3.5) return 'text-blue-600 dark:text-blue-400';
-    if (rating >= 2.5) return 'text-yellow-600 dark:text-yellow-400';
-    return 'text-orange-600 dark:text-orange-400';
-  };
-
   return (
     <DashboardLayout>
       <FadeIn>
@@ -257,23 +249,42 @@ const InternFeedback = () => {
 
             {/* Filters */}
             <Card className="mb-6">
-              <div className="flex items-center gap-2">
-                <Filter className="h-5 w-5 text-gray-500" />
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Filter by Rating:
-                </label>
-                <select
-                  value={filterRating}
-                  onChange={(e) => setFilterRating(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                >
-                  <option value="all">All Ratings</option>
-                  <option value="5">5 Stars</option>
-                  <option value="4">4 Stars</option>
-                  <option value="3">3 Stars</option>
-                  <option value="2">2 Stars</option>
-                  <option value="1">1 Star</option>
-                </select>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex items-center gap-2 flex-1">
+                  <Filter className="h-5 w-5 text-gray-500" />
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Filter by Rating:
+                  </label>
+                  <select
+                    value={filterRating}
+                    onChange={(e) => setFilterRating(e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  >
+                    <option value="all">All Ratings</option>
+                    <option value="5">5 Stars</option>
+                    <option value="4">4 Stars</option>
+                    <option value="3">3 Stars</option>
+                    <option value="2">2 Stars</option>
+                    <option value="1">1 Star</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-2 flex-1">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Filter by Category:
+                  </label>
+                  <select
+                    value={filterCategory}
+                    onChange={(e) => setFilterCategory(e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  >
+                    <option value="all">All Categories</option>
+                    <option value="quality">Quality</option>
+                    <option value="timeliness">Timeliness</option>
+                    <option value="communication">Communication</option>
+                    <option value="overall">Overall</option>
+                  </select>
+                </div>
               </div>
             </Card>
 
