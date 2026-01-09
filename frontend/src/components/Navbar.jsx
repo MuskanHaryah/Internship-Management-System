@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, LogOut, User, Sun, Moon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Modal from './Modal';
@@ -91,41 +92,49 @@ const Navbar = ({ onMenuClick }) => {
               </button>
 
               {/* Dropdown Menu */}
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600 overflow-hidden">
-                  <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-600">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      {user?.name}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                      {user?.email}
-                    </p>
-                  </div>
+              <AnimatePresence>
+                {showUserMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-xl shadow-xl border border-gray-200 dark:border-gray-600 overflow-hidden"
+                  >
+                    <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-600 bg-gradient-to-r from-primary-50 to-purple-50 dark:from-gray-800 dark:to-gray-800">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                        {user?.name}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {user?.email}
+                      </p>
+                    </div>
 
-                  <div className="py-2">
-                    <Link
-                      to="/profile"
-                      className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                      onClick={() => setShowUserMenu(false)}
-                    >
-                      <User className="h-4 w-4 text-gray-700 dark:text-gray-300" />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">
-                        Profile Settings
-                      </span>
-                    </Link>
+                    <div className="py-2">
+                      <Link
+                        to="/profile"
+                        className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200 group"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <User className="h-4 w-4 text-gray-700 dark:text-gray-300 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          Profile Settings
+                        </span>
+                      </Link>
 
-                    <button
-                      onClick={handleLogoutClick}
-                      className="w-full flex items-center gap-3 px-4 py-2 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                    >
-                      <LogOut className="h-4 w-4 text-red-600 dark:text-red-400" />
-                      <span className="text-sm text-red-600 dark:text-red-400">
-                        Logout
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              )}
+                      <button
+                        onClick={handleLogoutClick}
+                        className="w-full flex items-center gap-3 px-4 py-2 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 group"
+                      >
+                        <LogOut className="h-4 w-4 text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm text-red-600 dark:text-red-400">
+                          Logout
+                        </span>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>

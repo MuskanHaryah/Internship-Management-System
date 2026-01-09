@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MessageSquare, Search, Plus, Eye, Edit, Trash2, Star, Calendar, User, ClipboardList, TrendingUp } from 'lucide-react';
+import { MessageSquare, Search, Plus, Eye, Edit, Trash2, Star, Calendar, User, ClipboardList, TrendingUp, Filter, X, ArrowUpDown } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { feedbackAPI, taskAPI, userAPI } from '../services/api';
@@ -14,6 +14,9 @@ const ManageFeedback = () => {
   const [interns, setInterns] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRating, setFilterRating] = useState('all');
+  const [filterIntern, setFilterIntern] = useState('all');
+  const [sortBy, setSortBy] = useState('date');
+  const [sortOrder, setSortOrder] = useState('desc');
   const [selectedFeedback, setSelectedFeedback] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -122,6 +125,16 @@ const ManageFeedback = () => {
     return 'text-red-600 dark:text-red-400';
   };
 
+  const clearFilters = () => {
+    setSearchTerm('');
+    setFilterRating('all');
+    setFilterIntern('all');
+    setSortBy('date');
+    setSortOrder('desc');
+  };
+
+  const hasActiveFilters = searchTerm !== '' || filterRating !== 'all' || filterIntern !== 'all';
+
   const filteredFeedback = feedbackList.filter(feedback => {
     // Filter out orphaned feedback (feedback without a valid task)
     if (!feedback.task) return false;
@@ -133,7 +146,31 @@ const ManageFeedback = () => {
     
     const matchesRating = filterRating === 'all' || feedback.rating === parseInt(filterRating);
     
-    return matchesSearch && matchesRating;
+    const matchesIntern = filterIntern === 'all' || feedback.intern?._id === filterIntern;
+    
+    return matchesSearch && matchesRating && matchesIntern;
+  });
+
+  const sortedFeedback = [...filteredFeedback].sort((a, b) => {
+    let comparison = 0;
+
+    switch (sortBy) {
+      case 'rating':
+        comparison = a.rating - b.rating;
+        break;
+      case 'task':
+        comparison = (a.task?.title || '').localeCompare(b.task?.title || '');
+        break;
+      case 'intern':
+        comparison = (a.intern?.name || '').localeCompare(b.intern?.name || '');
+        break;
+      case 'date':
+      default:
+        comparison = new Date(a.createdAt) - new Date(b.createdAt);
+        break;
+    }
+
+    return sortOrder === 'asc' ? comparison : -comparison;
   });
 
   const ratingOptions = [
@@ -143,6 +180,21 @@ const ManageFeedback = () => {
     { value: '3', label: '3 Stars' },
     { value: '2', label: '2 Stars' },
     { value: '1', label: '1 Star' },
+  ];
+
+  const internOptions = [
+    { value: 'all', label: 'All Interns' },
+    ...interns.map(intern => ({
+      value: intern._id,
+      label: intern.name,
+    }))
+  ];
+
+  const sortOptions = [
+    { value: 'date', label: 'Date' },
+    { value: 'rating', label: 'Rating' },
+    { value: 'task', label: 'Task' },
+    { value: 'intern', label: 'Intern' },
   ];
 
   const taskOptions = tasks
@@ -286,15 +338,15 @@ const ManageFeedback = () => {
         </div>
 
         {/* Analytics Cards */}
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StaggerItem>
-            <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-              <div className="flex items-center justify-between">
-                <div>
+            <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="flex-1">
                   <p className="text-blue-100 text-sm font-medium mb-1">Total Feedback</p>
                   <h3 className="text-3xl font-bold">{analytics.totalFeedback}</h3>
                 </div>
-                <div className="h-14 w-14 bg-white/20 rounded-lg flex items-center justify-center">
+                <div className="h-14 w-14 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
                   <MessageSquare className="h-7 w-7" />
                 </div>
               </div>
@@ -302,13 +354,25 @@ const ManageFeedback = () => {
           </StaggerItem>
 
           <StaggerItem>
-            <Card className="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white">
-              <div className="flex items-center justify-between">
-                <div>
+            <Card className="bg-gradient-to-br from-yellow-500 to-orange-600 text-white h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="flex-1">
                   <p className="text-yellow-100 text-sm font-medium mb-1">Average Rating</p>
                   <h3 className="text-3xl font-bold">{analytics.averageRating}</h3>
+                  <div className="flex gap-1 mt-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        className={`h-4 w-4 ${
+                          star <= Math.round(analytics.averageRating)
+                            ? 'fill-white text-white'
+                            : 'text-white/40'
+                        }`}
+                      />
+                    ))}
+                  </div>
                 </div>
-                <div className="h-14 w-14 bg-white/20 rounded-lg flex items-center justify-center">
+                <div className="h-14 w-14 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
                   <Star className="h-7 w-7 fill-current" />
                 </div>
               </div>
@@ -316,13 +380,13 @@ const ManageFeedback = () => {
           </StaggerItem>
 
           <StaggerItem>
-            <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
-              <div className="flex items-center justify-between">
-                <div>
+            <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="flex-1">
                   <p className="text-green-100 text-sm font-medium mb-1">5 Star Reviews</p>
                   <h3 className="text-3xl font-bold">{analytics.fiveStars}</h3>
                 </div>
-                <div className="h-14 w-14 bg-white/20 rounded-lg flex items-center justify-center">
+                <div className="h-14 w-14 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
                   <TrendingUp className="h-7 w-7" />
                 </div>
               </div>
@@ -330,35 +394,13 @@ const ManageFeedback = () => {
           </StaggerItem>
 
           <StaggerItem>
-            <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-              <div className="flex items-center justify-between">
+            <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white h-full">
+              <div className="flex items-center justify-between h-full">
                 <div className="flex-1">
-                  <p className="text-purple-100 text-sm font-medium mb-3">Rating Distribution</p>
-                  <div className="space-y-1">
-                    {[
-                      { stars: 5, count: analytics.fiveStars },
-                      { stars: 4, count: analytics.fourStars },
-                      { stars: 3, count: analytics.threeStars },
-                      { stars: 2, count: analytics.twoStars },
-                      { stars: 1, count: analytics.oneStar }
-                    ].map(({ stars, count }) => (
-                      <div key={stars} className="flex items-center gap-2 text-sm">
-                        <div className="flex items-center gap-1 w-14">
-                          <span className="font-medium">{stars}</span>
-                          <Star className="h-3 w-3 fill-current" />
-                        </div>
-                        <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-white rounded-full transition-all duration-500"
-                            style={{ width: analytics.totalFeedback > 0 ? `${(count / analytics.totalFeedback) * 100}%` : '0%' }}
-                          />
-                        </div>
-                        <span className="w-8 text-right font-medium">{count}</span>
-                      </div>
-                    ))}
-                  </div>
+                  <p className="text-purple-100 text-sm font-medium mb-1">4 Star Reviews</p>
+                  <h3 className="text-3xl font-bold">{analytics.fourStars}</h3>
                 </div>
-                <div className="h-14 w-14 bg-white/20 rounded-lg flex items-center justify-center ml-4">
+                <div className="h-14 w-14 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
                   <ClipboardList className="h-7 w-7" />
                 </div>
               </div>
@@ -366,24 +408,145 @@ const ManageFeedback = () => {
           </StaggerItem>
         </StaggerContainer>
 
+        {/* Rating Distribution Chart */}
+        <Card className="mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary-600" />
+            Rating Distribution
+          </h2>
+          <div className="space-y-3">
+            {[
+              { stars: 5, count: analytics.fiveStars, color: 'bg-gradient-to-r from-green-400 to-green-600' },
+              { stars: 4, count: analytics.fourStars, color: 'bg-gradient-to-r from-blue-400 to-blue-600' },
+              { stars: 3, count: analytics.threeStars, color: 'bg-gradient-to-r from-yellow-400 to-yellow-600' },
+              { stars: 2, count: analytics.twoStars, color: 'bg-gradient-to-r from-orange-400 to-orange-600' },
+              { stars: 1, count: analytics.oneStar, color: 'bg-gradient-to-r from-red-400 to-red-600' }
+            ].map(({ stars, count, color }) => (
+              <div key={stars} className="flex items-center gap-3">
+                <div className="flex items-center gap-1 w-16">
+                  <span className="font-semibold text-gray-900 dark:text-white">{stars}</span>
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                </div>
+                <div className="flex-1 h-8 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full ${color} transition-all duration-500 flex items-center justify-end pr-3`}
+                    style={{ width: analytics.totalFeedback > 0 ? `${(count / analytics.totalFeedback) * 100}%` : '0%' }}
+                  >
+                    {count > 0 && (
+                      <span className="text-xs font-semibold text-white">{count}</span>
+                    )}
+                  </div>
+                </div>
+                <span className="w-16 text-right font-medium text-gray-600 dark:text-gray-400">
+                  {analytics.totalFeedback > 0 ? `${((count / analytics.totalFeedback) * 100).toFixed(0)}%` : '0%'}
+                </span>
+              </div>
+            ))}
+          </div>
+        </Card>
+
         {/* Filters */}
         <Card className="mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              type="text"
-              placeholder="Search feedback by task, intern, or comments..."
-              icon={Search}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Dropdown
-              label=""
-              placeholder="Filter by rating"
-              value={filterRating}
-              onChange={(e) => setFilterRating(e.target.value)}
-              options={ratingOptions}
-            />
+          {/* Filter Controls */}
+          <div className="grid grid-cols-12 gap-4 mb-4">
+            <div className="col-span-12 md:col-span-4">
+              <Input
+                type="text"
+                placeholder="Search feedback by task, intern, or comments..."
+                icon={Search}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="col-span-12 md:col-span-2">
+              <Dropdown
+                label=""
+                placeholder="Filter by rating"
+                value={filterRating}
+                onChange={(e) => setFilterRating(e.target.value)}
+                options={ratingOptions}
+              />
+            </div>
+            <div className="col-span-12 md:col-span-2">
+              <Dropdown
+                label=""
+                placeholder="Filter by intern"
+                value={filterIntern}
+                onChange={(e) => setFilterIntern(e.target.value)}
+                options={internOptions}
+              />
+            </div>
+            <div className="col-span-12 md:col-span-2">
+              <Dropdown
+                label=""
+                placeholder="Sort by"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                options={sortOptions}
+              />
+            </div>
+            <div className="col-span-12 md:col-span-2">
+              <Button
+                variant="outline"
+                className="w-full h-10"
+                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              >
+                <ArrowUpDown className="h-4 w-4 mr-2" />
+                {sortOrder === 'asc' ? 'Asc' : 'Desc'}
+              </Button>
+            </div>
           </div>
+
+          {/* Active Filters & Results Count */}
+          {(hasActiveFilters || sortedFeedback.length > 0) && (
+            <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <Filter className="h-4 w-4" />
+                <span>Showing {sortedFeedback.length} of {feedbackList.length} feedback</span>
+              </div>
+              
+              {searchTerm && (
+                <Badge variant="info" className="flex items-center gap-1">
+                  Search: {searchTerm}
+                  <X 
+                    className="h-3 w-3 cursor-pointer hover:text-white" 
+                    onClick={() => setSearchTerm('')}
+                  />
+                </Badge>
+              )}
+              
+              {filterRating !== 'all' && (
+                <Badge variant="warning" className="flex items-center gap-1">
+                  Rating: {filterRating} stars
+                  <X 
+                    className="h-3 w-3 cursor-pointer hover:text-white" 
+                    onClick={() => setFilterRating('all')}
+                  />
+                </Badge>
+              )}
+              
+              {filterIntern !== 'all' && (
+                <Badge variant="success" className="flex items-center gap-1">
+                  Intern: {interns.find(i => i._id === filterIntern)?.name}
+                  <X 
+                    className="h-3 w-3 cursor-pointer hover:text-white" 
+                    onClick={() => setFilterIntern('all')}
+                  />
+                </Badge>
+              )}
+
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="ml-auto"
+                >
+                  Clear All Filters
+                </Button>
+              )}
+            </div>
+          )}
         </Card>
 
         {/* Feedback Table */}
@@ -416,18 +579,28 @@ const ManageFeedback = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {filteredFeedback.length === 0 ? (
+                  {sortedFeedback.length === 0 ? (
                     <tr>
                       <td colSpan="6" className="px-6 py-12 text-center">
                         <MessageSquare className="h-12 w-12 mx-auto text-gray-400 mb-3" />
                         <p className="text-gray-500 dark:text-gray-400">
-                          {searchTerm ? 'No feedback found matching your search' : 'No feedback yet'}
+                          {hasActiveFilters ? 'No feedback found matching your filters' : 'No feedback yet'}
                         </p>
+                        {hasActiveFilters && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={clearFilters}
+                            className="mt-3"
+                          >
+                            Clear Filters
+                          </Button>
+                        )}
                       </td>
                     </tr>
                   ) : (
-                    filteredFeedback.map((feedback) => (
-                      <tr key={feedback._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    sortedFeedback.map((feedback) => (
+                      <tr key={feedback._id} className="hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent dark:hover:from-gray-700/30 dark:hover:to-transparent transition-all duration-200 border-b border-gray-100 dark:border-gray-700/50">
                         <td className="px-6 py-4">
                           <div className="flex items-center text-sm">
                             <ClipboardList className="h-4 w-4 mr-2 text-gray-400" />

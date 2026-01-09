@@ -16,7 +16,7 @@ const Card = ({
 
   return (
     <div 
-      className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg ${hover ? 'hover:shadow-xl transition-shadow duration-300' : ''} ${paddingStyles[padding]} ${className}`}
+      className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 ${hover ? 'hover:shadow-2xl hover:border-gray-200 dark:hover:border-gray-600 transition-all duration-300 transform hover:-translate-y-0.5' : ''} ${paddingStyles[padding]} ${className}`}
       {...props}
     >
       {(title || subtitle) && (

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ClipboardList, Search, Plus, Eye, Edit, Trash2, Calendar, Flag, User, ExternalLink, MessageSquare, Star, TrendingUp, FileText } from 'lucide-react';
+import { ClipboardList, Search, Plus, Eye, Edit, Trash2, Calendar, Flag, User, ExternalLink, MessageSquare, Star, TrendingUp, FileText, Filter, X, ArrowUpDown } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { taskAPI, userAPI, feedbackAPI, progressAPI } from '../services/api';
@@ -14,6 +14,9 @@ const ManageTasks = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
+  const [filterIntern, setFilterIntern] = useState('all');
+  const [sortBy, setSortBy] = useState('deadline');
+  const [sortOrder, setSortOrder] = useState('asc');
   const [selectedTask, setSelectedTask] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -192,6 +195,20 @@ const ManageTasks = () => {
     return variants[priority] || 'default';
   };
 
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchTerm('');
+    setFilterStatus('all');
+    setFilterPriority('all');
+    setFilterIntern('all');
+    setSortBy('deadline');
+    setSortOrder('asc');
+  };
+
+  // Check if any filters are active
+  const hasActiveFilters = searchTerm !== '' || filterStatus !== 'all' || filterPriority !== 'all' || filterIntern !== 'all';
+
+  // Filter tasks
   const filteredTasks = tasks.filter(task => {
     const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          task.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -207,7 +224,38 @@ const ManageTasks = () => {
     }
     
     const matchesPriority = filterPriority === 'all' || task.priority === filterPriority;
-    return matchesSearch && matchesStatus && matchesPriority;
+    const matchesIntern = filterIntern === 'all' || task.assignedTo?._id === filterIntern;
+    
+    return matchesSearch && matchesStatus && matchesPriority && matchesIntern;
+  });
+
+  // Sort tasks
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    let comparison = 0;
+    
+    switch (sortBy) {
+      case 'title':
+        comparison = a.title.localeCompare(b.title);
+        break;
+      case 'deadline':
+        comparison = new Date(a.deadline) - new Date(b.deadline);
+        break;
+      case 'priority': {
+        const priorityOrder = { low: 1, medium: 2, high: 3 };
+        comparison = priorityOrder[a.priority] - priorityOrder[b.priority];
+        break;
+      }
+      case 'status':
+        comparison = a.status.localeCompare(b.status);
+        break;
+      case 'created':
+        comparison = new Date(a.createdAt) - new Date(b.createdAt);
+        break;
+      default:
+        comparison = 0;
+    }
+    
+    return sortOrder === 'asc' ? comparison : -comparison;
   });
 
   const statusOptions = [
@@ -340,30 +388,158 @@ const ManageTasks = () => {
 
         {/* Filters */}
         <Card className="mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="md:col-span-2">
-              <Input
-                type="text"
-                placeholder="Search tasks..."
-                icon={Search}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+          <div className="space-y-4">
+            {/* Search and Filter Row */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+              {/* Search */}
+              <div className="md:col-span-4">
+                <Input
+                  type="text"
+                  placeholder="Search tasks by title or description..."
+                  icon={Search}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+
+              {/* Status Filter */}
+              <div className="md:col-span-2">
+                <Dropdown
+                  label=""
+                  placeholder="Status"
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  options={statusOptions}
+                />
+              </div>
+
+              {/* Priority Filter */}
+              <div className="md:col-span-2">
+                <Dropdown
+                  label=""
+                  placeholder="Priority"
+                  value={filterPriority}
+                  onChange={(e) => setFilterPriority(e.target.value)}
+                  options={priorityOptions}
+                />
+              </div>
+
+              {/* Intern Filter */}
+              <div className="md:col-span-2">
+                <Dropdown
+                  label=""
+                  placeholder="All Interns"
+                  value={filterIntern}
+                  onChange={(e) => setFilterIntern(e.target.value)}
+                  options={[
+                    { value: 'all', label: 'All Interns' },
+                    ...internOptions
+                  ]}
+                />
+              </div>
+
+              {/* Sort Order */}
+              <div className="md:col-span-2">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                >
+                  <ArrowUpDown className="h-4 w-4 mr-2" />
+                  {sortOrder === 'asc' ? 'Asc' : 'Desc'}
+                </Button>
+              </div>
             </div>
-            <Dropdown
-              label=""
-              placeholder="Filter by status"
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              options={statusOptions}
-            />
-            <Dropdown
-              label=""
-              placeholder="Filter by priority"
-              value={filterPriority}
-              onChange={(e) => setFilterPriority(e.target.value)}
-              options={priorityOptions}
-            />
+
+            {/* Sort By Row */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+              <div className="md:col-span-3">
+                <Dropdown
+                  label=""
+                  placeholder="Sort by"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  options={[
+                    { value: 'deadline', label: 'Deadline' },
+                    { value: 'title', label: 'Task Title' },
+                    { value: 'priority', label: 'Priority' },
+                    { value: 'status', label: 'Status' },
+                    { value: 'created', label: 'Created Date' },
+                  ]}
+                />
+              </div>
+            </div>
+
+            {/* Active Filters & Results Count */}
+            <div className="flex items-center justify-between flex-wrap gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* Results Count */}
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Showing <span className="font-semibold text-gray-900 dark:text-white">{sortedTasks.length}</span> of {tasks.length} tasks
+                </span>
+
+                {/* Active Filter Tags */}
+                {searchTerm && (
+                  <Badge variant="info" className="gap-1">
+                    Search: "{searchTerm}"
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="ml-1 hover:bg-blue-200 dark:hover:bg-blue-700 rounded-full p-0.5"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                )}
+
+                {filterStatus !== 'all' && (
+                  <Badge variant="warning" className="gap-1">
+                    Status: {getStatusLabel(filterStatus)}
+                    <button
+                      onClick={() => setFilterStatus('all')}
+                      className="ml-1 hover:bg-yellow-200 dark:hover:bg-yellow-700 rounded-full p-0.5"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                )}
+
+                {filterPriority !== 'all' && (
+                  <Badge variant="danger" className="gap-1">
+                    Priority: {filterPriority.charAt(0).toUpperCase() + filterPriority.slice(1)}
+                    <button
+                      onClick={() => setFilterPriority('all')}
+                      className="ml-1 hover:bg-red-200 dark:hover:bg-red-700 rounded-full p-0.5"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                )}
+
+                {filterIntern !== 'all' && (
+                  <Badge variant="success" className="gap-1">
+                    Intern: {interns.find(i => i._id === filterIntern)?.name}
+                    <button
+                      onClick={() => setFilterIntern('all')}
+                      className="ml-1 hover:bg-green-200 dark:hover:bg-green-700 rounded-full p-0.5"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                )}
+              </div>
+
+              {/* Clear Filters Button */}
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Clear All Filters
+                </Button>
+              )}
+            </div>
           </div>
         </Card>
 
@@ -397,18 +573,28 @@ const ManageTasks = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {filteredTasks.length === 0 ? (
+                  {sortedTasks.length === 0 ? (
                     <tr>
                       <td colSpan="6" className="px-6 py-12 text-center">
                         <ClipboardList className="h-12 w-12 mx-auto text-gray-400 mb-3" />
                         <p className="text-gray-500 dark:text-gray-400">
-                          {searchTerm ? 'No tasks found matching your search' : 'No tasks yet'}
+                          {hasActiveFilters ? 'No tasks found matching your filters' : 'No tasks yet'}
                         </p>
+                        {hasActiveFilters && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={clearFilters}
+                            className="mt-3"
+                          >
+                            Clear Filters
+                          </Button>
+                        )}
                       </td>
                     </tr>
                   ) : (
-                    filteredTasks.map((task) => (
-                      <tr key={task._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    sortedTasks.map((task) => (
+                      <tr key={task._id} className="hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent dark:hover:from-gray-700/30 dark:hover:to-transparent transition-all duration-200 border-b border-gray-100 dark:border-gray-700/50">
                         <td className="px-6 py-4">
                           <div>
                             <div className="text-sm font-semibold text-gray-900 dark:text-white">

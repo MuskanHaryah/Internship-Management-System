@@ -6,13 +6,13 @@ const Badge = ({
   className = '',
 }) => {
   const variants = {
-    default: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
-    primary: 'bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-400',
-    success: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
-    danger: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400',
-    warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
-    info: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400',
-    purple: 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400',
+    default: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 shadow-sm',
+    primary: 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400 shadow-sm border border-primary-200 dark:border-primary-800',
+    success: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 shadow-sm border border-green-200 dark:border-green-800',
+    danger: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 shadow-sm border border-red-200 dark:border-red-800',
+    warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 shadow-sm border border-yellow-200 dark:border-yellow-800',
+    info: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 shadow-sm border border-blue-200 dark:border-blue-800',
+    purple: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 shadow-sm border border-purple-200 dark:border-purple-800',
   };
 
   const sizes = {

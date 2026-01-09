@@ -29,15 +29,15 @@ const Input = forwardRef(({
           type={type}
           className={`
             w-full ${Icon ? 'pl-10' : 'pl-4'} pr-4 py-3 
-            rounded-lg border 
+            rounded-lg border shadow-sm
             ${error 
-              ? 'border-red-500 focus:ring-red-500 focus:border-red-500' 
-              : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500 focus:border-primary-500'
+              ? 'border-red-500 focus:ring-red-500 focus:border-red-500 focus:shadow-red-100 dark:focus:shadow-red-900/50' 
+              : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500 focus:border-primary-500 focus:shadow-primary-100 dark:focus:shadow-primary-900/50'
             }
             bg-white dark:bg-gray-700 
             text-gray-900 dark:text-white 
             placeholder-gray-400 dark:placeholder-gray-500
-            focus:ring-2 focus:outline-none
+            focus:ring-2 focus:outline-none focus:shadow-lg
             transition-all duration-200
             ${className}
           `}

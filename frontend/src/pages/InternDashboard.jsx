@@ -23,7 +23,8 @@ const InternDashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
-  }, [fetchDashboardData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchDashboardData = async () => {
     try {
@@ -131,66 +132,78 @@ const InternDashboard = () => {
         {/* Stats Cards */}
         <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StaggerItem>
-            <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:shadow-xl transition-shadow">
-              <div className="flex items-center justify-between">
+            <Card className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:shadow-2xl transition-all duration-300 border-none">
+              <div className="flex items-center justify-between relative z-10">
                 <div>
                   <p className="text-blue-100 text-sm font-medium mb-1">Total Tasks</p>
-                  <h3 className="text-3xl font-bold">{stats.totalTasks}</h3>
+                  <h3 className="text-4xl font-bold">{stats.totalTasks}</h3>
                   <p className="text-xs text-blue-100 mt-2">Assigned to you</p>
                 </div>
-                <div className="h-14 w-14 bg-white/20 rounded-lg flex items-center justify-center">
+                <div className="h-14 w-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
                   <ClipboardList className="h-7 w-7" />
                 </div>
               </div>
+              <div className="absolute -bottom-4 -right-4 opacity-10">
+                <ClipboardList className="h-28 w-28" />
+              </div>
             </Card>
           </StaggerItem>
 
           <StaggerItem>
-            <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white hover:shadow-xl transition-shadow">
-              <div className="flex items-center justify-between">
+            <Card className="relative overflow-hidden bg-gradient-to-br from-green-500 to-green-600 text-white hover:shadow-2xl transition-all duration-300 border-none">
+              <div className="flex items-center justify-between relative z-10">
                 <div>
                   <p className="text-green-100 text-sm font-medium mb-1">Completed</p>
-                  <h3 className="text-3xl font-bold">{stats.completedTasks}</h3>
+                  <h3 className="text-4xl font-bold">{stats.completedTasks}</h3>
                   <p className="text-xs text-green-100 mt-2">Tasks submitted</p>
                 </div>
-                <div className="h-14 w-14 bg-white/20 rounded-lg flex items-center justify-center">
+                <div className="h-14 w-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
                   <CheckCircle className="h-7 w-7" />
                 </div>
               </div>
-            </Card>
-          </StaggerItem>
-
-          <StaggerItem>
-            <Card className="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white hover:shadow-xl transition-shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-yellow-100 text-sm font-medium mb-1">Pending</p>
-                  <h3 className="text-3xl font-bold">{stats.pendingTasks}</h3>
-                  <p className="text-xs text-yellow-100 mt-2">Yet to submit</p>
-                </div>
-                <div className="h-14 w-14 bg-white/20 rounded-lg flex items-center justify-center">
-                  <Clock className="h-7 w-7" />
-                </div>
+              <div className="absolute -bottom-4 -right-4 opacity-10">
+                <CheckCircle className="h-28 w-28" />
               </div>
             </Card>
           </StaggerItem>
 
           <StaggerItem>
-            <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white hover:shadow-xl transition-shadow">
-              <div className="flex items-center justify-between">
+            <Card className="relative overflow-hidden bg-gradient-to-br from-yellow-500 to-yellow-600 text-white hover:shadow-2xl transition-all duration-300 border-none">
+              <div className="flex items-center justify-between relative z-10">
+                <div>
+                  <p className="text-yellow-100 text-sm font-medium mb-1">Pending</p>
+                  <h3 className="text-4xl font-bold">{stats.pendingTasks}</h3>
+                  <p className="text-xs text-yellow-100 mt-2">Yet to submit</p>
+                </div>
+                <div className="h-14 w-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
+                  <Clock className="h-7 w-7" />
+                </div>
+              </div>
+              <div className="absolute -bottom-4 -right-4 opacity-10">
+                <Clock className="h-28 w-28" />
+              </div>
+            </Card>
+          </StaggerItem>
+
+          <StaggerItem>
+            <Card className="relative overflow-hidden bg-gradient-to-br from-purple-500 to-purple-600 text-white hover:shadow-2xl transition-all duration-300 border-none">
+              <div className="flex items-center justify-between relative z-10">
                 <div className="flex-1">
                   <p className="text-purple-100 text-sm font-medium mb-1">Overall Progress</p>
-                  <h3 className="text-3xl font-bold text-white mb-3">{stats.overallProgress}%</h3>
-                  <div className="w-full bg-white/30 rounded-full h-2 overflow-hidden">
+                  <h3 className="text-4xl font-bold text-white mb-3">{stats.overallProgress}%</h3>
+                  <div className="w-full bg-white/30 rounded-full h-2.5 overflow-hidden shadow-inner">
                     <div
-                      className="h-full bg-green-400 rounded-full transition-all duration-500"
+                      className="h-full bg-white rounded-full transition-all duration-500 shadow-sm"
                       style={{ width: `${stats.overallProgress}%` }}
                     />
                   </div>
                 </div>
-                <div className="h-14 w-14 bg-white/20 rounded-lg flex items-center justify-center">
+                <div className="h-14 w-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg ml-4">
                   <TrendingUp className="h-7 w-7" />
                 </div>
+              </div>
+              <div className="absolute -bottom-4 -right-4 opacity-10">
+                <TrendingUp className="h-28 w-28" />
               </div>
             </Card>
           </StaggerItem>
@@ -297,7 +310,7 @@ const InternDashboard = () => {
                   <div
                     key={feedback._id}
                     className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-                    onClick={() => navigate('/intern/feedback', { state: { feedbackId: feedback._id } })}
+                    onClick={() => navigate('/intern/feedback')}
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">

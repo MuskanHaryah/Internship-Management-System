@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './utils/ProtectedRoute';
 
 // Pages
@@ -20,14 +21,15 @@ import Unauthorized from './pages/Unauthorized';
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <Router>
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+    <ErrorBoundary>
+      <ThemeProvider>
+        <AuthProvider>
+          <Router>
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
 
             {/* Protected Admin Routes */}
@@ -116,24 +118,43 @@ function App() {
             position="top-right"
             toastOptions={{
               duration: 4000,
+              className: 'dark:bg-gray-800 dark:text-white',
               style: {
-                background: '#363636',
-                color: '#fff',
                 padding: '16px',
-                borderRadius: '8px',
+                borderRadius: '12px',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                backdropFilter: 'blur(8px)',
               },
               success: {
-                duration: 4000,
+                duration: 3000,
+                style: {
+                  background: '#10B981',
+                  color: '#fff',
+                },
                 iconTheme: {
-                  primary: '#10B981',
-                  secondary: '#fff',
+                  primary: '#fff',
+                  secondary: '#10B981',
                 },
               },
               error: {
                 duration: 5000,
+                style: {
+                  background: '#EF4444',
+                  color: '#fff',
+                },
                 iconTheme: {
-                  primary: '#EF4444',
-                  secondary: '#fff',
+                  primary: '#fff',
+                  secondary: '#EF4444',
+                },
+              },
+              loading: {
+                style: {
+                  background: '#3B82F6',
+                  color: '#fff',
+                },
+                iconTheme: {
+                  primary: '#fff',
+                  secondary: '#3B82F6',
                 },
               },
             }}
@@ -142,6 +163,7 @@ function App() {
       </Router>
     </AuthProvider>
     </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 

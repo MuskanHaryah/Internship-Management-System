@@ -99,31 +99,34 @@ const AdminDashboard = () => {
     return matchesSearch && matchesFilter;
   });
 
+  // eslint-disable-next-line no-unused-vars
   const StatCard = ({ icon: Icon, title, value, change, color }) => (
     <HoverScale>
-      <Card className="relative overflow-hidden">
-        <div className="flex items-center justify-between">
-          <div className="bg-white/20 p-3 rounded-lg">
-            <Icon className="h-8 w-8" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-              {title}
-            </p>
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white">
-              {value}
-            </h3>
+      <Card className="relative overflow-hidden border-none shadow-xl">
+        <div className={`absolute inset-0 ${color} opacity-90`}></div>
+        <div className="relative z-10 text-white">
+          <div className="flex items-center justify-between mb-4">
+            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl shadow-lg">
+              <Icon className="h-7 w-7" />
+            </div>
             {change && (
-              <p className={`text-sm mt-2 ${change > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {change > 0 ? '+' : ''}{change}% from last month
-              </p>
+              <span className="text-xs font-semibold bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full">
+                {change > 0 ? '↑' : '↓'} {Math.abs(change)}%
+              </span>
             )}
           </div>
-          <div className={`p-4 rounded-xl ${color}`}>
-            <Icon className="h-8 w-8 text-white" />
+          <div>
+            <p className="text-sm font-medium text-white/80 mb-1">
+              {title}
+            </p>
+            <h3 className="text-4xl font-bold mb-2">
+              {value}
+            </h3>
           </div>
         </div>
-        <div className={`absolute bottom-0 left-0 right-0 h-1 ${color}`}></div>
+        <div className="absolute -bottom-6 -right-6 opacity-20">
+          <Icon className="h-32 w-32" />
+        </div>
       </Card>
     </HoverScale>
   );

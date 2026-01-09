@@ -144,18 +144,18 @@ const InternFeedback = () => {
             {/* Statistics Cards */}
             <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <StaggerItem>
-                <Card className="bg-gradient-to-br from-yellow-500 to-orange-600 text-white">
-                  <div className="flex items-center justify-between">
-                    <div>
+                <Card className="bg-gradient-to-br from-yellow-500 to-orange-600 text-white h-full">
+                  <div className="flex items-center justify-between h-full">
+                    <div className="flex-1">
                       <p className="text-yellow-100 text-sm font-medium mb-1">Average Rating</p>
-                      <h3 className={`text-3xl font-bold`}>
+                      <h3 className="text-3xl font-bold">
                         {averageRating.toFixed(1)}
                       </h3>
                       <div className="mt-2">
                         {renderStars(Math.round(averageRating), 'h-4 w-4')}
                       </div>
                     </div>
-                    <div className="bg-white/20 p-3 rounded-lg">
+                    <div className="bg-white/20 p-3 rounded-lg flex-shrink-0">
                       <Star className="h-8 w-8" />
                     </div>
                   </div>
@@ -163,13 +163,13 @@ const InternFeedback = () => {
               </StaggerItem>
 
               <StaggerItem>
-                <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-                  <div className="flex items-center justify-between">
-                    <div>
+                <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white h-full">
+                  <div className="flex items-center justify-between h-full">
+                    <div className="flex-1">
                       <p className="text-blue-100 text-sm font-medium mb-1">Total Feedback</p>
                       <h3 className="text-3xl font-bold">{feedbackList.length}</h3>
                     </div>
-                    <div className="bg-white/20 p-3 rounded-lg">
+                    <div className="bg-white/20 p-3 rounded-lg flex-shrink-0">
                       <MessageSquare className="h-8 w-8" />
                     </div>
                   </div>
@@ -177,13 +177,13 @@ const InternFeedback = () => {
               </StaggerItem>
 
               <StaggerItem>
-                <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
-                  <div className="flex items-center justify-between">
-                    <div>
+                <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white h-full">
+                  <div className="flex items-center justify-between h-full">
+                    <div className="flex-1">
                       <p className="text-green-100 text-sm font-medium mb-1">5 Star Reviews</p>
                       <h3 className="text-3xl font-bold">{stats.ratingCounts[5]}</h3>
                     </div>
-                    <div className="bg-white/20 p-3 rounded-lg">
+                    <div className="bg-white/20 p-3 rounded-lg flex-shrink-0">
                       <Award className="h-8 w-8" />
                     </div>
                   </div>
@@ -191,9 +191,9 @@ const InternFeedback = () => {
               </StaggerItem>
 
               <StaggerItem>
-                <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-                  <div className="flex items-center justify-between">
-                    <div>
+                <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white h-full">
+                  <div className="flex items-center justify-between h-full">
+                    <div className="flex-1">
                       <p className="text-purple-100 text-sm font-medium mb-1">This Month</p>
                       <h3 className="text-3xl font-bold">
                         {feedbackList.filter(f => {
@@ -204,7 +204,7 @@ const InternFeedback = () => {
                         }).length}
                       </h3>
                     </div>
-                    <div className="bg-white/20 p-3 rounded-lg">
+                    <div className="bg-white/20 p-3 rounded-lg flex-shrink-0">
                       <TrendingUp className="h-8 w-8" />
                     </div>
                   </div>

@@ -49,14 +49,14 @@ const Modal = ({
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Overlay */}
       <div 
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity animate-fadeIn"
         onClick={closeOnOverlayClick ? onClose : undefined}
       />
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
         <div 
-          className={`relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full ${sizes[size]} transform transition-all`}
+          className={`relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full ${sizes[size]} transform transition-all animate-scaleIn`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}

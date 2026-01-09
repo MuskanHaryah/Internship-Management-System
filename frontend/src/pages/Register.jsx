@@ -7,12 +7,14 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { Input, Button, Dropdown } from '../components';
 import { FadeIn } from '../components/Animations';
+import { validateEmail, validatePassword, validateName } from '../utils/validation';
+import { handleFormError } from '../utils/errorHandler';
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
   const { register: registerUser } = useAuth();
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors }, watch } = useForm();
+  const { register, handleSubmit, formState: { errors }, watch, setError } = useForm();
 
   const password = watch('password');
 
@@ -28,7 +30,14 @@ const Register = () => {
       toast.success('Registration successful! Please login.');
       navigate('/login');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Registration failed. Please try again.');
+      // Handle form errors from API
+      const errorMessage = handleFormError(error, setError);
+      
+      // Show user-friendly error message
+      const message = error.formattedMessage || 
+                     error.response?.data?.message || 
+                     'Registration failed. Please try again.';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -109,10 +118,7 @@ const Register = () => {
                   error={errors.name?.message}
                   {...register('name', {
                     required: 'Name is required',
-                    minLength: {
-                      value: 3,
-                      message: 'Name must be at least 3 characters'
-                    }
+                    validate: (value) => validateName(value) || true
                   })}
                 />
               </div>
@@ -127,10 +133,7 @@ const Register = () => {
                   error={errors.email?.message}
                   {...register('email', {
                     required: 'Email is required',
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Invalid email address'
-                    }
+                    validate: (value) => validateEmail(value) || true
                   })}
                 />
               </div>
@@ -146,10 +149,7 @@ const Register = () => {
                   helperText="Must be at least 6 characters"
                   {...register('password', {
                     required: 'Password is required',
-                    minLength: {
-                      value: 6,
-                      message: 'Password must be at least 6 characters'
-                    }
+                    validate: (value) => validatePassword(value) || true
                   })}
                 />
               </div>

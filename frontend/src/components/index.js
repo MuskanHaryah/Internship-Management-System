@@ -16,3 +16,4 @@ export { default as CircularProgress } from './CircularProgress';
 export { SkeletonCard, SkeletonTable, SkeletonText, SkeletonStats } from './Skeleton';
 export { Toast, ToastContainer } from './Toast';
 export * from './Animations';
+export * from './Loading';

@@ -73,16 +73,17 @@ const Dropdown = forwardRef(({
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           className={`
-            w-full px-4 py-3 text-left rounded-lg border
+            w-full px-4 py-3 text-left rounded-lg border shadow-sm
             ${error 
-              ? 'border-red-500 focus:ring-red-500' 
-              : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500'
+              ? 'border-red-500 focus:ring-red-500 focus:shadow-red-100 dark:focus:shadow-red-900/50' 
+              : 'border-gray-300 dark:border-gray-600 focus:ring-primary-500 focus:shadow-primary-100 dark:focus:shadow-primary-900/50'
             }
             bg-white dark:bg-gray-700
             text-gray-900 dark:text-white
-            focus:ring-2 focus:outline-none
+            focus:ring-2 focus:outline-none focus:shadow-lg
             transition-all duration-200
             flex items-center justify-between
+            hover:border-gray-400 dark:hover:border-gray-500
           `}
         >
           <span className={selectedOption ? '' : 'text-gray-400 dark:text-gray-500'}>
@@ -95,7 +96,7 @@ const Dropdown = forwardRef(({
 
         {/* Dropdown Menu */}
         {isOpen && (
-          <div className="absolute z-50 w-full mt-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto">
+          <div className="absolute z-50 w-full mt-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl max-h-60 overflow-auto animate-fadeIn">
             {options.length === 0 ? (
               <div className="px-4 py-3 text-gray-500 dark:text-gray-400 text-center">
                 No options available
@@ -108,8 +109,8 @@ const Dropdown = forwardRef(({
                   onClick={() => handleSelect(option)}
                   className={`
                     w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-600
-                    transition-colors duration-150
-                    ${selectedValue === option.value ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' : 'text-gray-900 dark:text-white'}
+                    transition-colors duration-150 first:rounded-t-lg last:rounded-b-lg
+                    ${selectedValue === option.value ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-medium' : 'text-gray-900 dark:text-white'}
                   `}
                 >
                   {option.label}

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { formatErrorMessage, logError } from '../utils/errorHandler';
 
 // Create axios instance with base URL
 const api = axios.create({
@@ -6,6 +7,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 30000, // 30 seconds timeout
 });
 
 // Request interceptor - Add auth token to requests
@@ -18,6 +20,7 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    logError(error, 'Request Interceptor');
     return Promise.reject(error);
   }
 );
@@ -26,12 +29,23 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Log error for debugging
+    logError(error, 'API Response');
+    
     if (error.response?.status === 401) {
       // Token expired or invalid
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      
+      // Only redirect if not already on login page
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
+      }
     }
+    
+    // Add formatted error message
+    error.formattedMessage = formatErrorMessage(error);
+    
     return Promise.reject(error);
   }
 );

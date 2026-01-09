@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, Search, Plus, Eye, Edit, Trash2, Mail, Calendar, CheckCircle, XCircle } from 'lucide-react';
+import { Users, Search, Plus, Eye, Edit, Trash2, Mail, Calendar, CheckCircle, XCircle, Filter, X, ArrowUpDown } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { userAPI } from '../services/api';
@@ -12,6 +12,8 @@ const ManageInterns = () => {
   const [interns, setInterns] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [sortBy, setSortBy] = useState('name');
+  const [sortOrder, setSortOrder] = useState('asc');
   const [selectedIntern, setSelectedIntern] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -102,11 +104,47 @@ const ManageInterns = () => {
     setShowDeleteModal(true);
   };
 
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchTerm('');
+    setFilterStatus('all');
+    setSortBy('name');
+    setSortOrder('asc');
+  };
+
+  // Check if any filters are active
+  const hasActiveFilters = searchTerm !== '' || filterStatus !== 'all';
+
+  // Filter interns
   const filteredInterns = interns.filter(intern => {
     const matchesSearch = intern.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          intern.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === 'all' || intern.status === filterStatus;
     return matchesSearch && matchesStatus;
+  });
+
+  // Sort interns
+  const sortedInterns = [...filteredInterns].sort((a, b) => {
+    let comparison = 0;
+    
+    switch (sortBy) {
+      case 'name':
+        comparison = a.name.localeCompare(b.name);
+        break;
+      case 'email':
+        comparison = a.email.localeCompare(b.email);
+        break;
+      case 'date':
+        comparison = new Date(a.createdAt) - new Date(b.createdAt);
+        break;
+      case 'status':
+        comparison = a.status.localeCompare(b.status);
+        break;
+      default:
+        comparison = 0;
+    }
+    
+    return sortOrder === 'asc' ? comparison : -comparison;
   });
 
   return (
@@ -134,27 +172,110 @@ const ManageInterns = () => {
 
         {/* Search & Filter */}
         <Card className="mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-2">
-              <Input
-                type="text"
-                placeholder="Search by name or email..."
-                icon={Search}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+          <div className="space-y-4">
+            {/* Search and Filter Row */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+              {/* Search */}
+              <div className="md:col-span-5">
+                <Input
+                  type="text"
+                  placeholder="Search by name or email..."
+                  icon={Search}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+
+              {/* Status Filter */}
+              <div className="md:col-span-3">
+                <Dropdown
+                  label=""
+                  placeholder="Filter by status"
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  options={[
+                    { value: 'all', label: 'All Status' },
+                    { value: 'active', label: 'Active' },
+                    { value: 'inactive', label: 'Inactive' },
+                  ]}
+                />
+              </div>
+
+              {/* Sort By */}
+              <div className="md:col-span-2">
+                <Dropdown
+                  label=""
+                  placeholder="Sort by"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  options={[
+                    { value: 'name', label: 'Name' },
+                    { value: 'email', label: 'Email' },
+                    { value: 'date', label: 'Join Date' },
+                    { value: 'status', label: 'Status' },
+                  ]}
+                />
+              </div>
+
+              {/* Sort Order */}
+              <div className="md:col-span-2">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                >
+                  <ArrowUpDown className="h-4 w-4 mr-2" />
+                  {sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+                </Button>
+              </div>
             </div>
-            <Dropdown
-              label=""
-              placeholder="Filter by status"
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              options={[
-                { value: 'all', label: 'All Status' },
-                { value: 'active', label: 'Active' },
-                { value: 'inactive', label: 'Inactive' },
-              ]}
-            />
+
+            {/* Active Filters & Results Count */}
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* Results Count */}
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Showing <span className="font-semibold text-gray-900 dark:text-white">{sortedInterns.length}</span> of {interns.length} interns
+                </span>
+
+                {/* Active Filter Tags */}
+                {searchTerm && (
+                  <Badge variant="info" className="gap-1">
+                    Search: "{searchTerm}"
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="ml-1 hover:bg-blue-200 dark:hover:bg-blue-700 rounded-full p-0.5"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                )}
+
+                {filterStatus !== 'all' && (
+                  <Badge variant="warning" className="gap-1">
+                    Status: {filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)}
+                    <button
+                      onClick={() => setFilterStatus('all')}
+                      className="ml-1 hover:bg-yellow-200 dark:hover:bg-yellow-700 rounded-full p-0.5"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                )}
+              </div>
+
+              {/* Clear Filters Button */}
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Clear Filters
+                </Button>
+              )}
+            </div>
           </div>
         </Card>
 
@@ -185,18 +306,28 @@ const ManageInterns = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {filteredInterns.length === 0 ? (
+                  {sortedInterns.length === 0 ? (
                     <tr>
                       <td colSpan="5" className="px-6 py-12 text-center">
                         <Users className="h-12 w-12 mx-auto text-gray-400 mb-3" />
                         <p className="text-gray-500 dark:text-gray-400">
-                          {searchTerm ? 'No interns found matching your search' : 'No interns yet'}
+                          {hasActiveFilters ? 'No interns found matching your filters' : 'No interns yet'}
                         </p>
+                        {hasActiveFilters && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={clearFilters}
+                            className="mt-3"
+                          >
+                            Clear Filters
+                          </Button>
+                        )}
                       </td>
                     </tr>
                   ) : (
-                    filteredInterns.map((intern) => (
-                      <tr key={intern._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    sortedInterns.map((intern) => (
+                      <tr key={intern._id} className="hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent dark:hover:from-gray-700/30 dark:hover:to-transparent transition-all duration-200 border-b border-gray-100 dark:border-gray-700/50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="h-12 w-12 flex-shrink-0">

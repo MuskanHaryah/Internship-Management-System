@@ -7,12 +7,14 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { Input, Button } from '../components';
 import { FadeIn, SlideInLeft } from '../components/Animations';
+import { validateEmail, validatePassword } from '../utils/validation';
+import { handleFormError } from '../utils/errorHandler';
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+  const { register, handleSubmit, formState: { errors }, setError } = useForm({
     mode: 'onSubmit',
     reValidateMode: 'onChange'
   });
@@ -33,7 +35,14 @@ const Login = () => {
         }
       }, 500);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed. Please check your credentials.');
+      // Handle form errors from API
+      const errorMessage = handleFormError(error, setError);
+      
+      // Show user-friendly error message
+      const message = error.formattedMessage || 
+                     error.response?.data?.message || 
+                     'Login failed. Please check your credentials.';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -105,10 +114,7 @@ const Login = () => {
                   error={errors.email?.message}
                   {...register('email', {
                     required: 'Email is required',
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Invalid email address'
-                    }
+                    validate: (value) => validateEmail(value) || true
                   })}
                 />
               </div>
@@ -123,10 +129,7 @@ const Login = () => {
                   error={errors.password?.message}
                   {...register('password', {
                     required: 'Password is required',
-                    minLength: {
-                      value: 6,
-                      message: 'Password must be at least 6 characters'
-                    }
+                    validate: (value) => validatePassword(value) || true
                   })}
                 />
               </div>
