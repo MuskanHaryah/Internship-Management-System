@@ -55,6 +55,7 @@ export const authAPI = {
   register: (userData) => api.post('/auth/register', userData),
   login: (credentials) => api.post('/auth/login', credentials),
   getMe: () => api.get('/auth/me'),
+  updateProfile: (data) => api.put('/auth/update-profile', data),
   updatePassword: (passwords) => api.put('/auth/update-password', passwords),
 };
 
@@ -97,6 +98,15 @@ export const feedbackAPI = {
   getFeedback: (id) => api.get(`/feedback/${id}`),
   updateFeedback: (id, data) => api.put(`/feedback/${id}`, data),
   deleteFeedback: (id) => api.delete(`/feedback/${id}`),
+};
+
+// Notification API calls
+export const notificationAPI = {
+  getNotifications: (params) => api.get('/notifications', { params }),
+  getUnreadCount: () => api.get('/notifications/unread-count'),
+  markAsRead: (id) => api.put(`/notifications/${id}/read`),
+  markAllAsRead: () => api.put('/notifications/mark-all-read'),
+  deleteNotification: (id) => api.delete(`/notifications/${id}`),
 };
 
 export default api;

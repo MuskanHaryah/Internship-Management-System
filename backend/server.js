@@ -12,6 +12,7 @@ const userRoutes = require('./routes/users');
 const taskRoutes = require('./routes/tasks');
 const progressRoutes = require('./routes/progress');
 const feedbackRoutes = require('./routes/feedback');
+const notificationRoutes = require('./routes/notifications');
 
 // Import error handlers
 const { errorHandler, notFound } = require('./utils/errorHandler');
@@ -30,6 +31,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/feedback', feedbackRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

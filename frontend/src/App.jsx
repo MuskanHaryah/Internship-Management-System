@@ -8,6 +8,7 @@ import ProtectedRoute from './utils/ProtectedRoute';
 // Pages
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
 import ManageInterns from './pages/ManageInterns';
 import ManageTasks from './pages/ManageTasks';
@@ -104,6 +105,16 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['intern']}>
                   <InternFeedback />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Shared Routes - Both Admin and Intern */}
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'intern']}>
+                  <Profile />
                 </ProtectedRoute>
               }
             />

@@ -1,5 +1,6 @@
 const Feedback = require('../models/Feedback');
 const Task = require('../models/Task');
+const { createNotification } = require('./notificationController');
 
 // @desc    Get all feedback
 // @route   GET /api/feedback
@@ -83,6 +84,17 @@ exports.createFeedback = async (req, res) => {
       .populate('intern', 'name email')
       .populate('task', 'title')
       .populate('givenBy', 'name email');
+
+    // Create notification for intern
+    await createNotification(
+      intern,
+      'feedback_received',
+      'New Feedback Received',
+      `You received ${rating} star${rating > 1 ? 's' : ''} for task: ${populatedFeedback.task?.title || 'Unknown Task'}`,
+      `/intern/feedback`,
+      req.user._id,
+      { feedbackId: feedback._id, rating, taskId: task }
+    );
 
     res.status(201).json({
       success: true,

@@ -1,6 +1,7 @@
 const Task = require('../models/Task');
 const User = require('../models/User');
 const Feedback = require('../models/Feedback');
+const { createNotification } = require('./notificationController');
 
 // @desc    Get all tasks
 // @route   GET /api/tasks
@@ -96,6 +97,17 @@ exports.createTask = async (req, res) => {
     const populatedTask = await Task.findById(task._id)
       .populate('assignedTo', 'name email')
       .populate('assignedBy', 'name email');
+
+    // Create notification for assigned intern
+    await createNotification(
+      assignedTo,
+      'task_assigned',
+      'New Task Assigned',
+      `You have been assigned a new task: ${title}`,
+      `/intern/tasks`,
+      req.user._id,
+      { taskId: task._id, priority, deadline }
+    );
 
     res.status(201).json({
       success: true,
@@ -204,6 +216,19 @@ exports.submitTask = async (req, res) => {
         await intern.save();
         console.log(`✅ Intern ${intern.name} reactivated after task submission`);
       }
+    }
+
+    // Create notification for admin who assigned the task
+    if (task.assignedBy) {
+      await createNotification(
+        task.assignedBy._id,
+        'task_submitted',
+        'Task Submitted',
+        `${task.assignedTo.name} has submitted the task: ${task.title}`,
+        `/admin/tasks`,
+        task.assignedTo._id,
+        { taskId: task._id, status: task.status }
+      );
     }
 
     res.status(200).json({

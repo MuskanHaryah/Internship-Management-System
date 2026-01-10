@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Modal from './Modal';
 import Button from './Button';
+import NotificationDropdown from './NotificationDropdown';
 
 const Navbar = ({ onMenuClick }) => {
   const { user, logout, isAdmin } = useAuth();
@@ -67,6 +68,9 @@ const Navbar = ({ onMenuClick }) => {
                 <Moon className="h-5 w-5 text-gray-700 transition-transform duration-300 rotate-0 hover:-rotate-12" />
               )}
             </button>
+
+            {/* Notifications */}
+            <NotificationDropdown />
 
             {/* User Menu */}
             <div className="relative">
