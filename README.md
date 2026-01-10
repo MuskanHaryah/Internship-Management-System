@@ -8,9 +8,373 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.0-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![Express](https://img.shields.io/badge/Express-4.21-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-[Features](#-features) • [Tech Stack](#-tech-stack) • [Installation](#-installation) • [Usage](#-usage) • [API Documentation](#-api-documentation) • [Contributing](#-contributing)
+[✨ Features](#-features) • [🛠️ Tech Stack](#️-tech-stack) • [📦 Installation](#-installation) • [🚀 Quick Start](#-quick-start) • [� Deployment](#-deployment)
+
+---
+
+</div>
+
+## 📋 Overview
+
+A comprehensive, production-ready platform designed to streamline internship program management. Built with the MERN stack and modern best practices, featuring role-based access control, real-time notifications, task management, and performance tracking.
+
+> 💡 **Perfect for**: Educational institutions, tech companies, startups, and organizations running internship programs
+
+### 🎯 Key Features
+
+<table>
+<tr>
+<td width="50%">
+
+**🔐 Secure & Reliable**
+- JWT-based authentication
+- Encrypted password storage
+- Role-based access control
+- Production-ready architecture
+
+</td>
+<td width="50%">
+
+**⚡ Fast & Modern**
+- Lightning-fast Vite build
+- React 19 with latest features
+- Optimized API responses
+- Real-time notifications
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**🎨 Beautiful UI/UX**
+- Dark mode support
+- Smooth animations
+- Responsive design
+- Intuitive navigation
+
+</td>
+<td width="50%">
+
+**📊 Comprehensive**
+- Task management
+- Progress tracking
+- Feedback system
+- Analytics dashboard
+
+</td>
+</tr>
+</table>
+
+---
+
+## ✨ Features
+
+### 👨‍💼 Admin Dashboard
+- Complete user management (Create, Update, Delete)
+- Task assignment with priorities and deadlines
+- Structured feedback system with ratings
+- Real-time analytics and progress tracking
+- Notification management
+
+### 👨‍🎓 Intern Dashboard
+- Personal task board with status tracking
+- Feedback history and performance ratings
+- Real-time notifications for assignments
+- Profile management and password updates
+- Task submission with URLs
+
+### 🎨 Design & UX
+- Modern, clean interface with smooth animations
+- Dark mode for comfortable viewing
+- Fully responsive across all devices
+- Accessible components (ARIA-compliant)
+- Interactive forms and modals
+
+---
+
+## 🛠️ Tech Stack
+
+**Frontend:** React 19, Vite, Tailwind CSS, Framer Motion, React Router, React Query, Axios  
+**Backend:** Node.js, Express, MongoDB, Mongoose, JWT, Bcrypt  
+**Testing:** Jest, Vitest, Supertest, React Testing Library
+
+<details>
+<summary><b>📚 View Detailed Tech Stack</b></summary>
+
+### Frontend
+- **React 19.2.0** - UI Framework
+- **Vite 6.0+** - Build Tool
+- **Tailwind CSS 3.4+** - Styling
+- **Framer Motion 12.23+** - Animations
+- **React Router 7.1+** - Navigation
+- **React Query 5.90+** - Data Fetching
+- **Axios 1.13+** - HTTP Client
+- **React Hook Form 7.69+** - Form Management
+- **Lucide React 0.562+** - Icons
+
+### Backend
+- **Node.js 18+** - Runtime
+- **Express 4.21+** - Web Framework
+- **MongoDB 6.0+** - Database
+- **Mongoose 8.10+** - ODM
+- **JWT 9.0+** - Authentication
+- **Bcrypt 5.1+** - Password Hashing
+
+</details>
+
+---
+
+## 📦 Installation
+
+### Prerequisites
+- Node.js (v18+)
+- MongoDB (v6.0+)
+- Git
+
+### Quick Setup
+
+```bash
+# Clone repository
+git clone https://github.com/MuskanHaryah/Internship-Management-System.git
+cd Internship-Management-System
+
+# Backend setup
+cd backend
+npm install
+cp .env.example .env
+# Edit .env with your MongoDB URI and JWT secret
+
+# Frontend setup
+cd ../frontend
+npm install
+# Create .env with: VITE_API_URL=http://localhost:5000
+```
+
+---
+
+## 🚀 Quick Start
+
+<details open>
+<summary><b>🎬 Running Locally</b></summary>
+
+<br>
+
+**Start Backend** (Terminal 1)
+```bash
+cd backend
+npm run dev
+```
+✅ Running at `http://localhost:5000`
+
+**Start Frontend** (Terminal 2)
+```bash
+cd frontend
+npm run dev
+```
+✅ Running at `http://localhost:5173`
+
+</details>
+
+<details>
+<summary><b>👤 Admin Setup</b></summary>
+
+<br>
+
+```bash
+cd backend
+npm run seed
+```
+
+**Login Credentials:**
+- 📧 Email: `admin@internship.com`
+- 🔑 Password: `Admin@123`
+
+⚠️ Change these after first login!
+
+</details>
+
+<details>
+<summary><b>🧪 Running Tests</b></summary>
+
+<br>
+
+```bash
+# Backend
+cd backend && npm test
+
+# Frontend
+cd frontend && npm test
+```
+
+</details>
+
+---
+
+## 📖 API Documentation
+
+### Overview
+Base URL: `http://localhost:5000/api`
+
+All endpoints require JWT authentication (except auth routes)
+
+<details>
+<summary><b>📡 View API Endpoints</b></summary>
+
+### Authentication
+- `POST /auth/register` - Register new user
+- `POST /auth/login` - Login user
+- `GET /auth/me` - Get current user
+- `PUT /auth/updateprofile` - Update profile
+- `PUT /auth/updatepassword` - Change password
+
+### Users (Admin only)
+- `GET /users` - Get all users
+- `GET /users/:id` - Get user by ID
+- `PUT /users/:id` - Update user
+- `DELETE /users/:id` - Delete user
+
+### Tasks
+- `GET /tasks` - Get all tasks
+- `POST /tasks` - Create task (Admin)
+- `GET /tasks/:id` - Get task by ID
+- `PUT /tasks/:id` - Update task
+- `DELETE /tasks/:id` - Delete task (Admin)
+- `PUT /tasks/:id/submit` - Submit task (Intern)
+
+### Feedback (Admin only)
+- `GET /feedback` - Get all feedback
+- `POST /feedback` - Create feedback
+- `GET /feedback/:id` - Get feedback by ID
+- `PUT /feedback/:id` - Update feedback
+- `DELETE /feedback/:id` - Delete feedback
+
+### Notifications
+- `GET /notifications` - Get user notifications
+- `PUT /notifications/:id/read` - Mark as read
+- `PUT /notifications/mark-all-read` - Mark all as read
+
+</details>
+
+---
+
+## 🗂️ Project Structure
+
+```
+├── backend/
+│   ├── controllers/       # Request handlers
+│   ├── models/           # Database schemas
+│   ├── routes/           # API routes
+│   ├── middleware/       # Auth & validation
+│   └── server.js         # Entry point
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/   # React components
+│   │   ├── pages/        # Page components
+│   │   ├── services/     # API services
+│   │   └── App.jsx       # Root component
+│   └── vite.config.js
+│
+├── DEPLOYMENT.md         # Deployment guide
+└── TESTING.md           # Testing docs
+```
+
+---
+
+## 🚢 Deployment
+
+**Recommended Stack:**
+- Frontend: Vercel
+- Backend: Railway
+- Database: MongoDB Atlas
+
+> 📝 See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions
+
+### 🌐 Live Demo
+
+> 🚀 Deployment in progress - Link will be added soon!
+
+---
+
+## 🧪 Testing
+
+Comprehensive test coverage for both frontend and backend components.
+
+> 📝 See [TESTING.md](TESTING.md) for detailed testing documentation
+
+---
+
+## 👨‍💻 Author
+
+**Muskan Haryah** - Full Stack Developer
+
+<div align="center">
+
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/MuskanHaryah)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/muskan-haryah-b4794b2ba)
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:muskanharyah36@gmail.com)
+
+</div>
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+Special thanks to the amazing open-source community and the teams behind React, Node.js, MongoDB, Tailwind CSS, and all the other technologies that made this project possible.
+
+---
+
+## 📞 Support
+
+<div align="center">
+
+| 🐛 Bug Reports | 💡 Feature Requests | 💬 Questions |
+|:---:|:---:|:---:|
+| [Create Issue](https://github.com/MuskanHaryah/Internship-Management-System/issues) | [Suggest Feature](https://github.com/MuskanHaryah/Internship-Management-System/issues) | [Start Discussion](https://github.com/MuskanHaryah/Internship-Management-System/discussions) |
+
+**📧 Email:** [muskanharyah36@gmail.com](mailto:muskanharyah36@gmail.com)
+
+</div>
+
+---
+
+<div align="center">
+
+### ⭐ Show Your Support
+
+If this project helped you, please give it a ⭐ star!
+
+![GitHub stars](https://img.shields.io/github/stars/MuskanHaryah/Internship-Management-System?style=social)
+![GitHub forks](https://img.shields.io/github/forks/MuskanHaryah/Internship-Management-System?style=social)
+
+---
+
+Made with ❤️ and ☕ by **Muskan Haryah**
+
+**© 2026 Muskan Haryah. All rights reserved.**
+
+</div>
 
 ---
 
@@ -20,14 +384,52 @@
 
 The **Internship Management System** is a comprehensive, production-ready platform designed to streamline the management of internship programs. Built with modern technologies and best practices, it provides an intuitive interface for administrators to manage interns, assign tasks, track progress, and provide feedback—all in one centralized location.
 
-### 🎯 Key Highlights
+> 💡 **Perfect for**: Educational institutions, tech companies, startups, and organizations running internship programs
 
-- **Role-Based Access Control**: Separate dashboards and permissions for Admins and Interns
-- **Real-Time Notifications**: Stay updated with instant notifications for task assignments, submissions, and feedback
-- **Progress Tracking**: Visual analytics and progress reports for comprehensive oversight
-- **Dark Mode Support**: Enhanced user experience with theme customization
-- **Responsive Design**: Seamless experience across desktop, tablet, and mobile devices
-- **Secure Authentication**: JWT-based authentication with encrypted password storage
+### 🎯 Why Choose This System?
+
+<table>
+<tr>
+<td width="50%">
+
+**🔐 Secure & Reliable**
+- JWT-based authentication
+- Encrypted password storage
+- Role-based access control
+- Production-ready architecture
+
+</td>
+<td width="50%">
+
+**⚡ Fast & Modern**
+- Lightning-fast Vite build
+- React 19 with latest features
+- Optimized API responses
+- Real-time updates
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**🎨 Beautiful UI/UX**
+- Dark mode support
+- Smooth animations
+- Responsive design
+- Intuitive navigation
+
+</td>
+<td width="50%">
+
+**📊 Comprehensive Features**
+- Task management
+- Progress tracking
+- Feedback system
+- Analytics dashboard
+
+</td>
+</tr>
+</table>
 
 ---
 
@@ -159,45 +561,77 @@ cp .env.example .env
 
 # Edit .env file with your configuration
 # Required variables:
-# - MONGODB_URI=mongodb://localhost:27017/internship-management
-# - JWT_SECRET=your_secret_key_here
-# - PORT=5000
-```
+# - MOQuick Start
 
-**Environment Variables (.env)**:
-```env
-PORT=5000
-NODE_ENV=development
-MONGODB_URI=mongodb://localhost:27017/internship-management
-JWT_SECRET=your_super_secret_jwt_key_change_this_in_production
-JWT_EXPIRE=7d
-```
+<details open>
+<summary><b>🎬 Running the Application</b></summary>
 
-### Frontend Setup
+<br>
+
+**Step 1: Start Backend Server**
 
 ```bash
-# Navigate to frontend directory (from root)
-cd ../frontend
+cd backend
+npm run dev
+```
+✅ Backend running at `http://localhost:5000`
 
-# Install dependencies
-npm install
+**Step 2: Start Frontend Server** (in new terminal)
 
-# Create .env file
-cp .env.example .env
+```bash
+cd frontend
+npm run dev
+```
+✅ Frontend running at `http://localhost:5173`
 
-# Edit .env file
-# Required variable:
-# - VITE_API_URL=http://localhost:5000
+**Step 3: Open in Browser**
+
+Navigate to `http://localhost:5173` and you're ready to go! 🎉
+
+</details>
+
+<details>
+<summary><b>👤 Default Admin Access</b></summary>
+
+<br>
+
+Create an admin account using the seed script:
+
+```bash
+cd backend
+npm run seed
 ```
 
-**Environment Variables (.env)**:
-```env
-VITE_API_URL=http://localhost:5000
+**Default Credentials:**
+```
+📧 Email: admin@internship.com
+🔑 Password: Admin@123
 ```
 
----
+> ⚠️ **Security Alert**: Change these credentials immediately after first login!
 
-## 🚀 Usage
+</details>
+
+<details>
+<summary><b>🧪 Running Tests</b></summary>
+
+<br>
+
+**Backend Tests**
+```bash
+cd backend
+npm test                    # Run all tests
+npm run test:watch         # Watch mode
+```
+
+**Frontend Tests**
+```bash
+cd frontend
+npm test                    # Run all tests
+npm run test:watch         # Watch mode
+```
+
+</details>
 
 ### Running the Application
 
@@ -399,9 +833,16 @@ Internship-Management-System/
 ├── TESTING.md           # Testing documentation
 └── README.md            # This file
 ```
+🌐 Live Demo
 
----
+> 🚀 **Status**: Ready for deployment!  
+> 📝 **Note**: Add your live URL here after deploying to Vercel + Railway
 
+```bash
+# After deployment, update this section with:
+🔗 Live Demo: https://your-app.vercel.app
+📡 Backend API: https://your-backend.railway.app
+```
 ## 🧪 Testing
 
 The project includes comprehensive test suites for both frontend and backend:
@@ -429,11 +870,24 @@ This application is designed to be deployed on modern cloud platforms:
 - **Backend**: Railway, Render, or Heroku
 - **Database**: MongoDB Atlas
 
-For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)
 
 ### Live Demo
 
 🔗 **Coming Soon!** - Deployment in progress
+
+---
+
+## 👨‍💻 Author
+
+**Muskan Haryah** - *Full Stack Developer*
+
+<div align="center">
+
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/MuskanHaryah)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/muskan-haryah-b4794b2ba)
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:muskanharyah36@gmail.com)
+
+</div>
 
 ---
 
@@ -472,37 +926,72 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 👨‍💻 Author
+Special thanks to:
 
-**Your Name**
+- 🎨 **Tailwind CSS** team for the amazing utility-first CSS framework
+- ⚛️ **React** team for the powerful UI library
+- 🚀 **Vite** team for the blazing-fast build tool
+- 💚 **Node.js** community for the robust backend ecosystem
+- 🍃 **MongoD & Community
 
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
-- Email: your.email@example.com
+<div align="center">
+
+### Need Help?
+
+| Type | Link |
+|------|------|
+| 🐛 **Bug Reports** | [Create an Issue](https://github.com/MuskanHaryah/Internship-Management-System/issues/new?labels=bug) |
+| 💡 **Feature Requests** | [Suggest a Feature](https://github.com/MuskanHaryah/Internship-Management-System/issues/new?labels=enhancement) |
+| 💬 **Questions** | [Start a Discussion](https://github.com/MuskanHaryah/Internship-Management-System/discussions) |
+| 📧 **Email** | [muskanharyah36@gmail.com](mailto:muskanharyah36@gmail.com) |
+
+</div>
 
 ---
 
-## 🙏 Acknowledgments
+## ⭐ Show Your Support
 
-- Built with modern web technologies and best practices
-- Inspired by real-world internship management needs
-- Thanks to all open-source contributors
+<div align="center">
+
+If this project helped you, please consider giving it a ⭐ star!
+
+**Share it with others who might find it useful:**
+
+[![Twitter](https://img.shields.io/badge/Share_on_Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/intent/tweet?text=Check%20out%20this%20amazing%20Internship%20Management%20System!&url=https://github.com/MuskanHaryah/Internship-Management-System)
+[![LinkedIn](https://img.shields.io/badge/Share_on_LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/sharing/share-offsite/?url=https://github.com/MuskanHaryah/Internship-Management-System)
+[![Facebook](https://img.shields.io/badge/Share_on_Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white)](https://www.facebook.com/sharer/sharer.php?u=https://github.com/MuskanHaryah/Internship-Management-System)
 
 ---
 
-## 📞 Support
+### 📊 Project Stats
 
-If you encounter any issues or have questions:
+![GitHub stars](https://img.shields.io/github/stars/MuskanHaryah/Internship-Management-System?style=social)
+![GitHub forks](https://img.shields.io/github/forks/MuskanHaryah/Internship-Management-System?style=social)
+![GitHub watchers](https://img.shields.io/github/watchers/MuskanHaryah/Internship-Management-System?style=social)
 
-1. Check the [Issues](https://github.com/yourusername/Internship-Management-System/issues) page
-2. Create a new issue with detailed information
-3. Reach out via email for urgent matters
+
+---
+
+### 📊 Project Stats
+
+![GitHub stars](https://img.shields.io/github/stars/MuskanHaryah/Internship-Management-System?style=social)
+![GitHub forks](https://img.shields.io/github/forks/MuskanHaryah/Internship-Management-System?style=social)
+![GitHub watchers](https://img.shields.io/github/watchers/MuskanHaryah/Internship-Management-System?style=social)
+
+---
+
+Made with ❤️ and ☕ by **Muskan**
+
+**© 2026 Muskan. All rights reserved.**
+---
+
+
 
 ---
 
 <div align="center">
 
-Made with ❤️ by [Your Name]
+Made with ❤️ by Muskan
 
 ⭐ Star this repository if you find it helpful!
 
