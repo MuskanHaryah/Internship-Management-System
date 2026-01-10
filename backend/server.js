@@ -46,19 +46,22 @@ app.get('/api/health', (req, res) => {
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/internship-management';
 
-mongoose
-  .connect(MONGODB_URI)
-  .then(() => {
-    console.log('✅ Connected to MongoDB');
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📍 API URL: http://localhost:${PORT}/api`);
+// Only connect and start server if not in test mode
+if (process.env.NODE_ENV !== 'test') {
+  mongoose
+    .connect(MONGODB_URI)
+    .then(() => {
+      console.log('✅ Connected to MongoDB');
+      app.listen(PORT, () => {
+        console.log(`🚀 Server running on port ${PORT}`);
+        console.log(`📍 API URL: http://localhost:${PORT}/api`);
+      });
+    })
+    .catch((error) => {
+      console.error('❌ MongoDB connection error:', error);
+      process.exit(1);
     });
-  })
-  .catch((error) => {
-    console.error('❌ MongoDB connection error:', error);
-    process.exit(1);
-  });
+}
 
 // Handle 404 - Route not found
 app.use(notFound);

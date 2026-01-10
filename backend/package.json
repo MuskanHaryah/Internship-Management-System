@@ -6,9 +6,15 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "seed": "node seed.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --coverage --detectOpenHandles",
+    "test:watch": "jest --watch"
   },
-  "keywords": ["internship", "management", "express", "mongodb"],
+  "keywords": [
+    "internship",
+    "management",
+    "express",
+    "mongodb"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -21,6 +27,14 @@
   },
   "description": "",
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "@shelf/jest-mongodb": "^6.0.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/user-event": "^14.6.1",
+    "jest": "^30.2.0",
+    "jsdom": "^27.4.0",
+    "nodemon": "^3.1.11",
+    "supertest": "^7.2.2",
+    "vitest": "^4.0.16"
   }
 }
