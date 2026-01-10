@@ -291,7 +291,6 @@ All endpoints require JWT authentication (except auth routes)
 - Backend: Railway
 - Database: MongoDB Atlas
 
-> 📝 See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions
 
 ### 🌐 Live Demo
 
