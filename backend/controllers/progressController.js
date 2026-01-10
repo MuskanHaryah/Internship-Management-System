@@ -1,5 +1,6 @@
 const Progress = require('../models/Progress');
 const Task = require('../models/Task');
+const User = require('../models/User');
 
 // @desc    Get all progress
 // @route   GET /api/progress
@@ -33,6 +34,14 @@ exports.createProgress = async (req, res) => {
 
     // Set intern as current user if not admin
     const internId = req.user.role === 'admin' ? req.body.intern : req.user._id;
+
+    // Reactivate intern if they were inactive
+    const intern = await User.findById(internId);
+    if (intern && intern.status === 'inactive') {
+      intern.status = 'active';
+      await intern.save();
+      console.log(`✅ Intern ${intern.name} reactivated after making progress`);
+    }
 
     const progress = await Progress.create({
       intern: internId,
@@ -84,6 +93,14 @@ exports.updateProgress = async (req, res) => {
     }
 
     const { percentage, status, notes } = req.body;
+
+    // Reactivate intern if they were inactive
+    const intern = await User.findById(progress.intern);
+    if (intern && intern.status === 'inactive') {
+      intern.status = 'active';
+      await intern.save();
+      console.log(`✅ Intern ${intern.name} reactivated after updating progress`);
+    }
 
     // Add update to history
     if (percentage !== undefined || notes) {

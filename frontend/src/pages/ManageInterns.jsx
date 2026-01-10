@@ -297,6 +297,12 @@ const ManageInterns = () => {
                     <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Joined
                     </th>
+                    <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Assigned
+                    </th>
+                    <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Completed
+                    </th>
                     <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Status
                     </th>
@@ -308,7 +314,7 @@ const ManageInterns = () => {
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {sortedInterns.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="px-6 py-12 text-center">
+                      <td colSpan="7" className="px-6 py-12 text-center">
                         <Users className="h-12 w-12 mx-auto text-gray-400 mb-3" />
                         <p className="text-gray-500 dark:text-gray-400">
                           {hasActiveFilters ? 'No interns found matching your filters' : 'No interns yet'}
@@ -360,9 +366,27 @@ const ManageInterns = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <Badge variant="success">
-                            <CheckCircle className="h-3 w-3 mr-1" />
-                            Active
+                          <div className="text-center">
+                            <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
+                              {intern.taskStats?.assigned || 0}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-center">
+                            <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-semibold bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+                              {intern.taskStats?.completed || 0}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <Badge variant={intern.status === 'active' ? 'success' : 'danger'}>
+                            {intern.status === 'active' ? (
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                            ) : (
+                              <XCircle className="h-3 w-3 mr-1" />
+                            )}
+                            {intern.status.charAt(0).toUpperCase() + intern.status.slice(1)}
                           </Badge>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">

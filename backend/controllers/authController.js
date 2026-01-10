@@ -94,13 +94,8 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Check if user is active
-    if (user.status !== 'active') {
-      return res.status(403).json({
-        success: false,
-        message: 'Your account is not active. Please contact admin.'
-      });
-    }
+    // Note: Inactive users can still login
+    // They will be reactivated automatically when they submit tasks or make progress
 
     // Generate token
     const token = generateToken(user._id);

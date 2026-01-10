@@ -131,7 +131,12 @@ const InternTaskList = () => {
     const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          task.description.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesTab = activeTab === 'all' || task.status === activeTab;
+    // Map tab IDs to actual status values
+    let statusToMatch = activeTab;
+    if (activeTab === 'submitted') statusToMatch = 'completed';
+    if (activeTab === 'completed') statusToMatch = 'reviewed';
+    
+    const matchesTab = activeTab === 'all' || task.status === statusToMatch;
     
     const matchesPriority = filterPriority === 'all' || task.priority === filterPriority;
     
@@ -142,8 +147,8 @@ const InternTaskList = () => {
     all: tasks.length,
     pending: tasks.filter(t => t.status === 'pending').length,
     'in-progress': tasks.filter(t => t.status === 'in-progress').length,
-    completed: tasks.filter(t => t.status === 'reviewed').length,
     submitted: tasks.filter(t => t.status === 'completed').length,
+    completed: tasks.filter(t => t.status === 'reviewed').length,
   };
 
   const tabs = [

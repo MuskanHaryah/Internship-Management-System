@@ -3,7 +3,7 @@ const Task = require('../models/Task');
 
 /**
  * Check and update inactive interns
- * If an intern hasn't completed any task in 3+ days, mark as inactive
+ * If an intern hasn't completed any task in 7+ days, mark as inactive
  */
 const checkInactiveInterns = async () => {
   try {
@@ -13,8 +13,8 @@ const checkInactiveInterns = async () => {
       status: 'active' 
     });
 
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
     for (const intern of activeInterns) {
       // Find the latest reviewed task for this intern
@@ -23,12 +23,12 @@ const checkInactiveInterns = async () => {
         status: 'reviewed'
       }).sort({ updatedAt: -1 });
 
-      // Check if intern has no completed tasks or last completion was 3+ days ago
-      if (!lastCompletedTask || lastCompletedTask.updatedAt < threeDaysAgo) {
+      // Check if intern has no completed tasks or last completion was 7+ days ago
+      if (!lastCompletedTask || lastCompletedTask.updatedAt < sevenDaysAgo) {
         // Update status to inactive
         intern.status = 'inactive';
         await intern.save();
-        console.log(`✅ Intern ${intern.name} marked as inactive (no activity for 3+ days)`);
+        console.log(`✅ Intern ${intern.name} marked as inactive (no activity for 7+ days)`);
       }
     }
   } catch (error) {

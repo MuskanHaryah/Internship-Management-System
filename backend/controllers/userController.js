@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Task = require('../models/Task');
 const checkInactiveInterns = require('../utils/checkInactiveInterns');
 
 // @desc    Get all users
@@ -11,10 +12,33 @@ exports.getAllUsers = async (req, res) => {
 
     const users = await User.find().select('-password').populate('assignedTasks');
 
+    // Add task statistics for interns
+    const usersWithStats = await Promise.all(users.map(async (user) => {
+      const userObj = user.toObject();
+      
+      if (user.role === 'intern') {
+        // Count total assigned tasks
+        const totalTasks = await Task.countDocuments({ assignedTo: user._id });
+        
+        // Count completed tasks (reviewed status)
+        const completedTasks = await Task.countDocuments({ 
+          assignedTo: user._id,
+          status: 'reviewed'
+        });
+        
+        userObj.taskStats = {
+          assigned: totalTasks,
+          completed: completedTasks
+        };
+      }
+      
+      return userObj;
+    }));
+
     res.status(200).json({
       success: true,
-      count: users.length,
-      data: users
+      count: usersWithStats.length,
+      data: usersWithStats
     });
   } catch (error) {
     res.status(500).json({
@@ -36,10 +60,31 @@ exports.getInterns = async (req, res) => {
       .select('-password')
       .populate('assignedTasks');
 
+    // Add task statistics
+    const internsWithStats = await Promise.all(interns.map(async (intern) => {
+      const internObj = intern.toObject();
+      
+      // Count total assigned tasks
+      const totalTasks = await Task.countDocuments({ assignedTo: intern._id });
+      
+      // Count completed tasks (reviewed status)
+      const completedTasks = await Task.countDocuments({ 
+        assignedTo: intern._id,
+        status: 'reviewed'
+      });
+      
+      internObj.taskStats = {
+        assigned: totalTasks,
+        completed: completedTasks
+      };
+      
+      return internObj;
+    }));
+
     res.status(200).json({
       success: true,
-      count: interns.length,
-      data: interns
+      count: internsWithStats.length,
+      data: internsWithStats
     });
   } catch (error) {
     res.status(500).json({
